@@ -1,0 +1,177 @@
+1) create database e_commerce;
+
+2)USE e_commerce;
+
+3) CREATE TABLE customers (
+id int auto_increment,
+name varchar(100) not null,
+email varchar(100) not null,
+address varchar(100) not null,
+primary key(id)
+);
+
+4) CREATE TABLE orders (
+id int auto_increment,
+customer_id int ,
+order_date date not null,
+total_amount DECIMAL(10, 2) not null, 
+primary key(id),
+FOREIGN KEY (customer_id) REFERENCES customers(id)
+);
+
+5)CREATE TABLE products (
+id int auto_increment,
+name varchar(100) not null,
+price DECIMAL(10, 2) not null, 
+description varchar(100) not null,
+primary key(id)
+);
+
+6)INSERT INTO customers (name, email, address) values 
+('john', 'john@gmail.com', '123 main st'),
+('ram', 'ram@gmail.com', '456 main st'),
+('raj', 'raj@gmail.com', '789 main st');
+
+7) INSERT INTO orders (customer_id, order_date, total_amount) values 
+(1, '2024-09-15', '100'),
+(2, '2024-09-20', '150'),
+(3, '2024-09-25', '200');
+
+8) INSERT INTO products (name, price, description) values 
+('product A', '200', 'description product A'),
+('product B', '300', 'description product B'),
+('product C', '400', 'description product C');
+
+9) SELECT customers.id, customers.name, customers.email, customers.address
+FROM customers
+JOIN orders ON customers.id = orders.customer_id
+WHERE orders.order_date >= CURDATE() - INTERVAL 30 DAY;
+
+10) SELECT customers.id, customers.name, customers.email, SUM(orders.total_amount) AS total_spent
+FROM customers
+JOIN orders ON customers.id = orders.customer_id
+GROUP BY customers.id, customers.name, customers.email;
+
+
+11) SELECT id FROM products WHERE name = 'Product C';
+
+UPDATE products
+SET price = 45.00
+WHERE id = 3;
+
+12) ALTER TABLE products
+ADD COLUMN discount DECIMAL(5, 2) DEFAULT 0;
+
+13) SELECT * 
+FROM products
+ORDER BY price DESC
+LIMIT 3;
+
+14) CREATE TABLE order_items (
+    id INT AUTO_INCREMENT,
+    order_id INT,
+    product_id INT,
+    quantity INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (order_id) REFERENCES orders(id),
+    FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
+
+15) INSERT INTO order_items (order_id, product_id, quantity) VALUES
+(1, 1, 1),
+(1, 2, 2),
+(2, 2, 1),
+(2, 3, 1),
+(3, 3, 1); 
+
+16) SELECT DISTINCT customers.name
+FROM customers
+JOIN orders ON customers.id = orders.customer_id
+JOIN order_items ON orders.id = order_items.order_id
+JOIN products ON order_items.product_id = products.id
+WHERE products.name = 'Product A';
+
+
+17) SELECT customers.name, orders.order_date
+FROM orders
+JOIN customers ON orders.customer_id = customers.id;
+
+
+18) SELECT *
+FROM orders
+WHERE total_amount > 150.00;
+
+19)SELECT o.id, SUM(oi.quantity * p.price) AS total_amount
+FROM orders o
+JOIN order_items oi ON o.id = oi.order_id
+JOIN products p ON oi.product_id = p.id
+GROUP BY o.id;
+
+20) SELECT AVG(total_amount) AS average_order_total
+FROM orders;
+
+
+Here’s a description for each of the SQL queries:
+
+1) Create the e_commerce Database
+	Creates a new database called e_commerce.
+
+2) Use the e_commerce Database
+	Switches the current database to e_commerce so that subsequent queries are run within it.
+
+3) Create the Customers Table
+	Creates a customers table to store customer information, with columns for an auto-incrementing id, name, email, and address.
+
+4)Create the Orders Table
+	Creates an orders table to store order details. It contains columns for an auto-incrementing id, a foreign key customer_id linking to the customers table, an order_date, and the 	total_amount of the order.
+
+5)Create the Products Table
+	Creates a products table to store product information. It includes an auto-incrementing id, name, price, and a description.
+	
+6)Insert Customer Data
+	Inserts three customers into the customers table with their names, emails, and addresses.
+
+7)Insert Orders Data
+	Inserts three orders into the orders table, associating them with customer IDs, order dates, and total amounts.
+
+8) Insert Products Data
+	Inserts three products into the products table with names, prices, and descriptions.
+
+9) Retrieve Customers with Recent Orders
+	Selects customer details for those who have placed orders in the last 30 days by joining the customers and orders tables.
+
+10) Calculate Total Amount Spent by Each Customer
+	Selects customer information along with the total amount they have spent, by grouping the results by each customer and summing their order totals.
+
+11) Find Product C by Name and Update Its Price
+	Retrieves the id of a product named "Product C" and then updates its price to 45.00 using that id.
+
+12) Add Discount Column to Products Table
+	Adds a new discount column to the products table, with a default value of 0.
+
+13) Retrieve Top 3 Most Expensive Products
+	Selects all products and orders them by price in descending order, then limits the result to the top 3 most expensive products.
+
+14) Create the Order Items Table
+	Creates a new table order_items to associate products with orders, specifying order_id, product_id, and the quantity ordered. Foreign keys ensure consistency between this table, 	orders, and products.
+
+15) Insert Data into Order Items Table
+	Inserts data into the order_items table, linking specific orders to specific products along with their respective quantities.
+
+16) Find Customers Who Ordered Product A
+	Selects the distinct names of customers who have ordered a product named "Product A" by joining the customers, orders, order_items, and products tables.
+
+17) Retrieve Customer Names and Order Dates
+	Retrieves the name of customers and the date of their orders by joining the customers and orders tables.
+
+18)Select Orders with High Total Amount
+	Selects all orders where the total_amount is greater than 150.00.
+
+19) Calculate Total Amount per Order Based on Quantity and Product Price
+	For each order, calculates the total amount by multiplying the quantity of each product by its price, then sums these values for each order.
+
+20) Calculate Average Order Total
+	Calculates the average total amount for all orders in the orders table.
+
+ 
